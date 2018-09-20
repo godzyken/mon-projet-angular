@@ -1,5 +1,11 @@
+import { Subject } from "rxjs";
+import {a} from "@angular/core/src/render3";
+
 export class AppareilService {
-  appareils = [
+
+  appareilsSubject = new Subject<any[]>();
+
+  private appareils = [
 
     {
       id: 1,
@@ -19,39 +25,35 @@ export class AppareilService {
 
   ];
 
+  emitAppareilSubject() {
+    this.appareilsSubject.next(this.appareils.slice());
+  }
+
   switchOnAll() {
     for (let appareil of this.appareils) {
       appareil.status = 'allumé';
     }
+    this.emitAppareilSubject();
   }
 
   switchOffAll() {
     for (let appareil of this.appareils) {
       appareil.status = 'éteint';
     }
+    this.emitAppareilSubject();
   }
-
-  // onAllumer() {
-  //   this.appareilService.switchOnAll();
-  // }
-  //
-  // onEteindre() {
-  //   if (confirm('Etes-vous sûr de vouloir éteindre tous vos appareils ?')) {
-  //     this.appareilService.switchOffAll();
-  //   }else {
-  //     return null;
-  //   }
-  // }
 
   switchOnOne(i: number) {
 
     this.appareils[i].status = 'allumé';
+    this.emitAppareilSubject();
 
   }
 
   switchOffOne(i: number) {
 
     this.appareils[i].status = 'éteint';
+    this.emitAppareilSubject();
 
   }
 
@@ -62,5 +64,18 @@ export class AppareilService {
       }
     );
     return appareil;
+  }
+
+  addAppareil(name: string, status: string) {
+    const appareilObject = {
+      id: 0,
+      name: '',
+      status: ''
+    };
+    appareilObject.name = name;
+    appareilObject.status = status;
+    appareilObject.id = this.appareils[(this.appareils.length -1)].id + 1;
+    this.appareils.push(appareilObject);
+    this.emitAppareilSubject();
   }
 }

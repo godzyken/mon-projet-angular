@@ -1,8 +1,6 @@
 export class AuthService {
 
-
   isAuth = false;
-
 
   signIn() {
 
@@ -27,7 +25,6 @@ export class AuthService {
     );
 
   }
-
 
   signOut() {
 
