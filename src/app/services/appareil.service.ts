@@ -1,6 +1,8 @@
 import { Subject } from "rxjs";
-import {a} from "@angular/core/src/render3";
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
+@Injectable()
 export class AppareilService {
 
   appareilsSubject = new Subject<any[]>();
@@ -24,6 +26,35 @@ export class AppareilService {
     }
 
   ];
+
+  constructor(private httpClient: HttpClient) { }
+
+  saveAppareilsToServer() {
+    this.httpClient
+      .put('https://mon-projet-angular-a72f9.firebaseio.com/appareils.json', this.appareils)
+      .subscribe(
+        () => {
+          console.log('Enregistement terminé !');
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
+  }
+
+  getAppareilsFromServer() {
+    this.httpClient
+      .get<any[]>('https://mon-projet-angular-a72f9.firebaseio.com/appareils.json')
+      .subscribe(
+        (response) => {
+          this.appareils = response;
+          this.emitAppareilSubject();
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
+  }
 
   emitAppareilSubject() {
     this.appareilsSubject.next(this.appareils.slice());
